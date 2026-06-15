@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ sesion[1] }} · Fotografía by Allen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
+    nav { display: flex; align-items: center; justify-content: space-between;
+          padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0; }
+    .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
+    .logo span { color: #999; font-weight: 300; }
+    .main { max-width: 800px; margin: 0 auto; padding: 48px 24px; }
+    .hero { text-align: center; margin-bottom: 48px; }
+    .brand { font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+             color: #bbb; margin-bottom: 10px; }
+    h1 { font-size: 36px; font-weight: 500; letter-spacing: -.02em;
+         color: #111; margin-bottom: 6px; }
+    .fecha { font-size: 12px; color: #ccc; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+            margin-bottom: 32px; }
+    .foto-wrap { position: relative; aspect-ratio: 1; overflow: hidden;
+                 border-radius: 4px; cursor: pointer; }
+    .foto-wrap img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
+    .foto-wrap:hover img { opacity: .88; }
+    .foto-wrap.sel::after { content: '✓'; position: absolute; top: 8px; right: 8px;
+                            width: 22px; height: 22px; background: #111; color: #fff;
+                            border-radius: 50%; font-size: 12px;
+                            line-height: 22px; text-align: center; }
+    .foto-wrap.sel img { opacity: .7; }
+    .foto-check { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px;
+                  background: rgba(255,255,255,.85); border: 0.5px solid #ccc;
+                  border-radius: 50%; cursor: pointer; display: flex;
+                  align-items: center; justify-content: center; font-size: 11px;
+                  transition: all .15s; z-index: 2; }
+    .foto-check:hover { background: #111; color: #fff; border-color: #111; }
+    .foto-wrap.sel .foto-check { background: #111; color: #fff; border-color: #111; }
+    .bottom { display: flex; align-items: center; justify-content: space-between;
+              border-top: 0.5px solid #f0f0f0; padding-top: 24px; }
+    .sel-count { font-size: 12px; color: #bbb; }
+    .sel-count span { color: #111; font-weight: 500; }
+    .btns { display: flex; gap: 10px; }
+    .btn-sel-all { border: 0.5px solid #ddd; background: #fff; border-radius: 6px;
+                   padding: 10px 16px; font-size: 12px; font-family: 'Inter', sans-serif;
+                   cursor: pointer; color: #666; letter-spacing: .03em; }
+    .btn-dl { background: #111; color: #fff; border: none; border-radius: 6px;
+              padding: 10px 20px; font-size: 12px; font-family: 'Inter', sans-serif;
+              cursor: pointer; letter-spacing: .04em; }
+    .btn-dl:disabled { background: #ccc; cursor: default; }
+    .footer { text-align: center; margin-top: 48px; padding-top: 24px;
+              border-top: 0.5px solid #f5f5f5; }
+    .footer a { font-size: 11px; color: #bbb; text-decoration: none;
+                letter-spacing: .06em; text-transform: uppercase; }
+    .footer a:hover { color: #111; }
+    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92);
+                z-index: 999; align-items: center; justify-content: center; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 4px; }
+    .lb-close { position: fixed; top: 20px; right: 28px; color: #fff; font-size: 28px;
+                cursor: pointer; opacity: .6; line-height: 1; }
+    .lb-close:hover { opacity: 1; }
+    .lb-prev, .lb-next { position: fixed; top: 50%; transform: translateY(-50%);
+                         color: #fff; font-size: 36px; cursor: pointer;
+                         opacity: .4; padding: 16px; user-select: none; }
+    .lb-prev:hover, .lb-next:hover { opacity: 1; }
+    .lb-prev { left: 12px; }
+    .lb-next { right: 12px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Allen <span>/ fotografía</span></div>
+  </nav>
+
+  <div class="main">
+    <div class="hero">
+      <div class="brand">Fotografía by Allen</div>
+      <h1>Hola, {{ sesion[1] }}.</h1>
+      <p class="fecha">Sesión del {{ sesion[3] }} · {{ fotos|length }} fotos</p>
+    </div>
+
+    <div class="grid">
+      {% for f in fotos %}
+        <div class="foto-wrap" data-src="/static/uploads/{{ f[2] }}"
+             data-name="{{ f[2] }}">
+          <img src="/static/uploads/{{ f[2] }}" alt="foto" loading="lazy"
+               onclick="abrirLb(this)">
+          <div class="foto-check" onclick="toggleSel(this.parentElement)">✓</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="bottom">
+      <div class="sel-count">
+        <span id="nsel">0</span> seleccionadas
+      </div>
+      <div class="btns">
+        <button class="btn-sel-all" onclick="selAll()">Seleccionar todas</button>
+        <button class="btn-dl" id="btnDl" onclick="descargar()" disabled>
+          Descargar →
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="https://madebyallen.framer.media/" target="_blank">
+        Ver portafolio →
+      </a>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lb">
+    <span class="lb-close" onclick="cerrarLb()">✕</span>
+    <span class="lb-prev" onclick="mover(-1)">‹</span>
+    <img id="lb-img" src="" alt="foto grande">
+    <span class="lb-next" onclick="mover(1)">›</span>
+  </div>
+
+  <script>
+    const srcs = [...document.querySelectorAll('.foto-wrap img')].map(i => i.src);
+    let idx = 0;
+
+    function abrirLb(img) {
+      idx = [...document.querySelectorAll('.foto-wrap img')].indexOf(img);
+      document.getElementById('lb-img').src = srcs[idx];
+      document.getElementById('lb').classList.add('open');
+    }
+    function cerrarLb() {
+      document.getElementById('lb').classList.remove('open');
+    }
+    function mover(dir) {
+      idx = (idx + dir + srcs.length) % srcs.length;
+      document.getElementById('lb-img').src = srcs[idx];
+    }
+    function toggleSel(el) {
+      el.classList.toggle('sel');
+      actualizarBtn();
+    }
+    function selAll() {
+      const all = document.querySelectorAll('.foto-wrap');
+      const allSel = [...all].every(e => e.classList.contains('sel'));
+      all.forEach(e => e.classList.toggle('sel', !allSel));
+      actualizarBtn();
+    }
+    function actualizarBtn() {
+      const n = document.querySelectorAll('.foto-wrap.sel').length;
+      document.getElementById('nsel').textContent = n;
+      document.getElementById('btnDl').disabled = n === 0;
+    }
+    function descargar() {
+      document.querySelectorAll('.foto-wrap.sel').forEach(el => {
+        const a = document.createElement('a');
+        a.href = el.dataset.src;
+        a.download = el.dataset.name;
+        a.click();
+      });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') cerrarLb();
+      if (e.key === 'ArrowRight') mover(1);
+      if (e.key === 'ArrowLeft') mover(-1);
+    });
+    document.getElementById('lb').addEventListener('click', function(e) {
+      if (e.target === this) cerrarLb();
+    });
+  </script>
+</body>
+</html>
