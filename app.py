@@ -1,18 +1,22 @@
 import os
 import secrets
-from flask import (Flask, render_template, request,  redirect, url_for, session, send_from_directory)
+from flask import (Flask, render_template, request,
+                   redirect, url_for, session, send_from_directory)
 from database import init_db, get_conn
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "allen-portal-secret-2024"
 
-UPLOAD_FOLDER = "static/uploads"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
 ALLOWED = {"jpg", "jpeg", "png", "webp"}
 USUARIO = "allen"
 PASSWORD = "Jhamal_0729"
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+init_db()
 
 
 def allowed_file(filename):
@@ -66,6 +70,7 @@ def panel():
     conn.close()
     return render_template("panel.html", sesiones=sesiones)
 
+
 # ── SESIÓN ──────────────────────────────────────
 
 @app.route("/nueva", methods=["POST"])
@@ -83,6 +88,7 @@ def nueva_sesion():
     conn.commit()
     conn.close()
     return redirect(url_for("panel"))
+
 
 @app.route("/sesion/<int:sid>")
 @login_required
@@ -132,6 +138,7 @@ def galeria(token):
     conn.close()
     return render_template("galeria.html", sesion=sesion, fotos=fotos)
 
+
 @app.route("/borrar/<int:sid>", methods=["POST"])
 @login_required
 def borrar_sesion(sid):
@@ -147,6 +154,7 @@ def borrar_sesion(sid):
     conn.close()
     return redirect(url_for("panel"))
 
+
 @app.route("/borrar-foto/<int:fid>/<int:sid>", methods=["POST"])
 @login_required
 def borrar_foto(fid, sid):
@@ -161,7 +169,6 @@ def borrar_foto(fid, sid):
     conn.close()
     return redirect(url_for("ver_sesion", sid=sid))
 
+
 if __name__ == "__main__":
-    app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-    init_db()
     app.run(debug=True)
