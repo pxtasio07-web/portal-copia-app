@@ -162,5 +162,6 @@ def borrar_foto(fid, sid):
     return redirect(url_for("ver_sesion", sid=sid))
 
 if __name__ == "__main__":
+    app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
     init_db()
     app.run(debug=True)

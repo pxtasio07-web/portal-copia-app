@@ -1,7 +1,10 @@
 import sqlite3
+import os
+
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "portal.db")
 
 def init_db():
-    conn = sqlite3.connect("portal.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -28,9 +31,4 @@ def init_db():
 
 
 def get_conn():
-    return sqlite3.connect("portal.db")
-
-
-if __name__ == "__main__":
-    init_db()
-    print("Base de datos creada.")
+    return sqlite3.connect(DB_PATH)

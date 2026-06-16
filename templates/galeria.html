@@ -3,158 +3,232 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ sesion[1] }} · Fotografía by Allen</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <title>{{ sesion[1] }} · Allen Photography</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
-    nav { display: flex; align-items: center; justify-content: space-between;
-          padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0; }
-    .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
-    .logo span { color: #999; font-weight: 300; }
-    .main { max-width: 800px; margin: 0 auto; padding: 48px 24px; }
-    .hero { text-align: center; margin-bottom: 48px; }
-    .brand { font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-             color: #bbb; margin-bottom: 10px; }
-    h1 { font-size: 36px; font-weight: 500; letter-spacing: -.02em;
-         color: #111; margin-bottom: 6px; }
-    .fecha { font-size: 12px; color: #ccc; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-            margin-bottom: 32px; }
-    .foto-wrap { position: relative; aspect-ratio: 1; overflow: hidden;
-                 border-radius: 4px; cursor: pointer; }
-    .foto-wrap img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
-    .foto-wrap:hover img { opacity: .88; }
-    .foto-wrap.sel::after { content: '✓'; position: absolute; top: 8px; right: 8px;
-                            width: 22px; height: 22px; background: #111; color: #fff;
-                            border-radius: 50%; font-size: 12px;
-                            line-height: 22px; text-align: center; }
-    .foto-wrap.sel img { opacity: .7; }
-    .foto-check { position: absolute; bottom: 8px; right: 8px; width: 22px; height: 22px;
-                  background: rgba(255,255,255,.85); border: 0.5px solid #ccc;
-                  border-radius: 50%; cursor: pointer; display: flex;
-                  align-items: center; justify-content: center; font-size: 11px;
-                  transition: all .15s; z-index: 2; }
-    .foto-check:hover { background: #111; color: #fff; border-color: #111; }
-    .foto-wrap.sel .foto-check { background: #111; color: #fff; border-color: #111; }
-    .bottom { display: flex; align-items: center; justify-content: space-between;
-              border-top: 0.5px solid #f0f0f0; padding-top: 24px; }
-    .sel-count { font-size: 12px; color: #bbb; }
-    .sel-count span { color: #111; font-weight: 500; }
-    .btns { display: flex; gap: 10px; }
-    .btn-sel-all { border: 0.5px solid #ddd; background: #fff; border-radius: 6px;
-                   padding: 10px 16px; font-size: 12px; font-family: 'Inter', sans-serif;
-                   cursor: pointer; color: #666; letter-spacing: .03em; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111;
+           -webkit-font-smoothing: antialiased; }
+    .hero { min-height: 100svh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 48px 24px; position: relative; background: #fff; }
+    .hero-brand { font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+                  color: #bbb; margin-bottom: 32px; }
+    .hero-greeting { font-family: 'Cormorant Garamond', serif; font-size: clamp(42px, 12vw, 72px);
+                     font-weight: 300; color: #111; line-height: 1.05;
+                     letter-spacing: -.01em; margin-bottom: 16px; }
+    .hero-greeting em { font-style: italic; }
+    .hero-tipo { font-size: 12px; color: #999; letter-spacing: .06em; 
+                 text-transform: uppercase; margin-bottom: 48px; }
+    .hero-scroll { display: flex; flex-direction: column; align-items: center;
+                   gap: 8px; color: #ccc; font-size: 11px; letter-spacing: .08em;
+                   text-transform: uppercase; position: absolute; bottom: 32px; }
+    .hero-scroll-line { width: 0.5px; height: 40px; background: #ccc; }
+    .mensaje { padding: 64px 32px; max-width: 560px; margin: 0 auto;
+               text-align: center; border-top: 0.5px solid #f0f0f0; }
+    .mensaje-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 5vw, 26px);
+                    font-weight: 300; color: #333; line-height: 1.6; font-style: italic; }
+    .mensaje-firma { margin-top: 28px; font-size: 11px; color: #bbb;
+                     letter-spacing: .08em; text-transform: uppercase; }
+    .galeria-header { padding: 0 20px 20px; max-width: 900px; margin: 0 auto;
+                      display: flex; align-items: center; justify-content: space-between; }
+    .galeria-count { font-size: 11px; color: #999; letter-spacing: .04em; }
+    .btn-sel-all { font-size: 11px; color: #666; background: none; border: 0.5px solid #ddd;
+                   border-radius: 20px; padding: 6px 14px; cursor: pointer;
+                   font-family: 'Inter', sans-serif; letter-spacing: .03em; }
+    .masonry { columns: 2; column-gap: 5px; padding: 0 20px;
+               max-width: 900px; margin: 0 auto; }
+    @media (min-width: 640px) { .masonry { columns: 3; } }
+    @media (min-width: 900px) { .masonry { columns: 4; } }
+    .foto-item { break-inside: avoid; margin-bottom: 5px; position: relative;
+                 border-radius: 4px; overflow: hidden; cursor: pointer; }
+    .foto-item img { width: 100%; display: block; transition: opacity .2s; }
+    .foto-item:hover img { opacity: .9; }
+    .foto-item .check { position: absolute; bottom: 8px; right: 8px;
+                        width: 26px; height: 26px; border-radius: 50%;
+                        background: rgba(255,255,255,.9); border: 0.5px solid #ccc;
+                        display: flex; align-items: center; justify-content: center;
+                        font-size: 12px; color: transparent; transition: all .15s; z-index: 2; }
+    .foto-item.sel .check { background: #111; border-color: #111; color: #fff; }
+    .foto-item.sel img { opacity: .75; }
+    .descarga { position: sticky; bottom: 0; background: #fff;
+                border-top: 0.5px solid #f0f0f0; padding: 16px 20px;
+                display: flex; align-items: center; justify-content: space-between;
+                gap: 12px; z-index: 10; }
+    .sel-info { font-size: 12px; color: #999; white-space: nowrap; }
+    .sel-info span { color: #111; font-weight: 500; }
+    .btns-dl { display: flex; gap: 8px; }
     .btn-dl { background: #111; color: #fff; border: none; border-radius: 6px;
-              padding: 10px 20px; font-size: 12px; font-family: 'Inter', sans-serif;
-              cursor: pointer; letter-spacing: .04em; }
-    .btn-dl:disabled { background: #ccc; cursor: default; }
-    .footer { text-align: center; margin-top: 48px; padding-top: 24px;
-              border-top: 0.5px solid #f5f5f5; }
-    .footer a { font-size: 11px; color: #bbb; text-decoration: none;
-                letter-spacing: .06em; text-transform: uppercase; }
-    .footer a:hover { color: #111; }
-    .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92);
-                z-index: 999; align-items: center; justify-content: center; }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 4px; }
-    .lb-close { position: fixed; top: 20px; right: 28px; color: #fff; font-size: 28px;
-                cursor: pointer; opacity: .6; line-height: 1; }
+              padding: 12px 18px; font-size: 12px; font-family: 'Inter', sans-serif;
+              cursor: pointer; letter-spacing: .03em; white-space: nowrap; }
+    .btn-dl:disabled { background: #ddd; color: #aaa; cursor: default; }
+    .btn-dl-all { background: #fff; color: #111; border: 0.5px solid #ddd;
+                  border-radius: 6px; padding: 12px 18px; font-size: 12px;
+                  font-family: 'Inter', sans-serif; cursor: pointer;
+                  letter-spacing: .03em; white-space: nowrap; }
+    .footer { text-align: center; padding: 48px 24px 40px;
+              border-top: 0.5px solid #f5f5f5; margin-top: 40px; }
+    .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 22px;
+                    font-weight: 300; color: #111; letter-spacing: .04em; margin-bottom: 8px; }
+    .footer-link { font-size: 10px; color: #bbb; text-decoration: none;
+                   letter-spacing: .1em; text-transform: uppercase; }
+    .footer-link:hover { color: #111; }
+    .lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.95);
+          z-index: 999; align-items: center; justify-content: center; touch-action: pan-y; }
+    .lb.open { display: flex; }
+    .lb img { max-width: 92vw; max-height: 88vh; object-fit: contain;
+              border-radius: 3px; user-select: none; pointer-events: none; }
+    .lb-close { position: fixed; top: 16px; right: 20px; color: #fff;
+                font-size: 24px; cursor: pointer; opacity: .6;
+                width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
     .lb-close:hover { opacity: 1; }
     .lb-prev, .lb-next { position: fixed; top: 50%; transform: translateY(-50%);
-                         color: #fff; font-size: 36px; cursor: pointer;
-                         opacity: .4; padding: 16px; user-select: none; }
+                         color: #fff; font-size: 32px; cursor: pointer; opacity: .35;
+                         padding: 20px 16px; user-select: none; }
     .lb-prev:hover, .lb-next:hover { opacity: 1; }
-    .lb-prev { left: 12px; }
-    .lb-next { right: 12px; }
+    .lb-prev { left: 0; }
+    .lb-next { right: 0; }
+    .lb-counter { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                  font-size: 11px; color: rgba(255,255,255,.4); letter-spacing: .06em; }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="logo">Allen <span>/ fotografía</span></div>
-  </nav>
 
-  <div class="main">
-    <div class="hero">
-      <div class="brand">Fotografía by Allen</div>
-      <h1>Hola, {{ sesion[1] }}.</h1>
-      <p class="fecha">Sesión del {{ sesion[3] }} · {{ fotos|length }} fotos</p>
+  <section class="hero">
+    <div class="hero-brand">Allen Photography</div>
+    <h1 class="hero-greeting">
+      Hola,<br><em>{{ sesion[1] }}.</em>
+    </h1>
+    <p class="hero-tipo">{{ sesion[2] }} · {{ sesion[3] }}</p>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      Ver fotos
     </div>
+  </section>
 
-    <div class="grid">
-      {% for f in fotos %}
-        <div class="foto-wrap" data-src="/static/uploads/{{ f[2] }}"
-             data-name="{{ f[2] }}">
-          <img src="/static/uploads/{{ f[2] }}" alt="foto" loading="lazy"
-               onclick="abrirLb(this)">
-          <div class="foto-check" onclick="toggleSel(this.parentElement)">✓</div>
-        </div>
-      {% endfor %}
-    </div>
+  <section class="mensaje">
+    {% set tipo = sesion[2] | lower %}
+    {% if "quinceañera" in tipo %}
+      <p class="mensaje-text">
+        Quince años son un momento que solo ocurre una vez.<br>
+        Fue un honor estar ahí para capturarlo contigo.
+      </p>
+    {% elif "graduaci" in tipo %}
+      <p class="mensaje-text">
+        Gracias por permitirme ser parte de este logro.<br>
+        Que estas imágenes te recuerden siempre lo lejos que has llegado.
+      </p>
+    {% elif "familia" in tipo %}
+      <p class="mensaje-text">
+        Las familias crecen, cambian y siguen adelante.<br>
+        Estas fotos guardan cómo eran hoy.
+      </p>
+    {% elif "boda" in tipo %}
+      <p class="mensaje-text">
+        Un día así merece ser recordado en cada detalle.<br>
+        Gracias por dejarme contar su historia.
+      </p>
+    {% elif "retrato" in tipo %}
+      <p class="mensaje-text">
+        Hay algo poderoso en una imagen que te muestra<br>
+        tal como eres. Espero que la sientas tuya.
+      </p>
+    {% else %}
+      <p class="mensaje-text">
+        Cada sesión es única. Gracias por confiarme<br>
+        la tuya. Espero que estas fotos signifiquen algo para ti.
+      </p>
+    {% endif %}
+    <p class="mensaje-firma">— Allen</p>
+  </section>
 
-    <div class="bottom">
-      <div class="sel-count">
-        <span id="nsel">0</span> seleccionadas
+  <div class="galeria-header">
+    <span class="galeria-count">{{ fotos|length }} fotografías</span>
+    <button class="btn-sel-all" onclick="selAll()">Seleccionar todas</button>
+  </div>
+
+  <div class="masonry" id="masonry">
+    {% for f in fotos %}
+      <div class="foto-item" data-src="/static/uploads/{{ f[2] }}"
+           data-name="{{ f[2] }}" data-idx="{{ loop.index0 }}">
+        <img src="/static/uploads/{{ f[2] }}" alt="foto" loading="lazy"
+             onclick="abrirLb({{ loop.index0 }})">
+        <div class="check" onclick="toggleSel(this.parentElement)">✓</div>
       </div>
-      <div class="btns">
-        <button class="btn-sel-all" onclick="selAll()">Seleccionar todas</button>
-        <button class="btn-dl" id="btnDl" onclick="descargar()" disabled>
-          Descargar →
-        </button>
-      </div>
-    </div>
+    {% endfor %}
+  </div>
 
-    <div class="footer">
-      <a href="https://madebyallen.framer.media/" target="_blank">
-        Ver portafolio →
-      </a>
+  <div class="descarga">
+    <div class="sel-info"><span id="nsel">0</span> sel.</div>
+    <div class="btns-dl">
+      <button class="btn-dl-all" onclick="descargarTodo()">Descargar todo</button>
+      <button class="btn-dl" id="btnDl" onclick="descargarSel()" disabled>
+        Descargar →
+      </button>
     </div>
   </div>
 
-  <div class="lightbox" id="lb">
+  <footer class="footer">
+    <div class="footer-brand">Allen Photography</div>
+    <a href="https://madebyallen.framer.media/" target="_blank" class="footer-link">
+      Ver portafolio →
+    </a>
+  </footer>
+
+  <div class="lb" id="lb">
     <span class="lb-close" onclick="cerrarLb()">✕</span>
     <span class="lb-prev" onclick="mover(-1)">‹</span>
-    <img id="lb-img" src="" alt="foto grande">
+    <img id="lb-img" src="" alt="foto">
     <span class="lb-next" onclick="mover(1)">›</span>
+    <div class="lb-counter" id="lb-counter"></div>
   </div>
 
   <script>
-    const srcs = [...document.querySelectorAll('.foto-wrap img')].map(i => i.src);
-    let idx = 0;
+    const items = [...document.querySelectorAll('.foto-item')];
+    const srcs  = items.map(i => i.dataset.src);
+    let idx = 0, touchX = 0;
 
-    function abrirLb(img) {
-      idx = [...document.querySelectorAll('.foto-wrap img')].indexOf(img);
+    function abrirLb(i) {
+      idx = i;
       document.getElementById('lb-img').src = srcs[idx];
+      document.getElementById('lb-counter').textContent = (idx+1) + ' / ' + srcs.length;
       document.getElementById('lb').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
     function cerrarLb() {
       document.getElementById('lb').classList.remove('open');
+      document.body.style.overflow = '';
     }
     function mover(dir) {
       idx = (idx + dir + srcs.length) % srcs.length;
       document.getElementById('lb-img').src = srcs[idx];
+      document.getElementById('lb-counter').textContent = (idx+1) + ' / ' + srcs.length;
     }
     function toggleSel(el) {
       el.classList.toggle('sel');
       actualizarBtn();
     }
     function selAll() {
-      const all = document.querySelectorAll('.foto-wrap');
+      const all = document.querySelectorAll('.foto-item');
       const allSel = [...all].every(e => e.classList.contains('sel'));
       all.forEach(e => e.classList.toggle('sel', !allSel));
       actualizarBtn();
     }
     function actualizarBtn() {
-      const n = document.querySelectorAll('.foto-wrap.sel').length;
+      const n = document.querySelectorAll('.foto-item.sel').length;
       document.getElementById('nsel').textContent = n;
       document.getElementById('btnDl').disabled = n === 0;
     }
-    function descargar() {
-      document.querySelectorAll('.foto-wrap.sel').forEach(el => {
+    function descargarSel() {
+      document.querySelectorAll('.foto-item.sel').forEach(el => {
         const a = document.createElement('a');
-        a.href = el.dataset.src;
-        a.download = el.dataset.name;
-        a.click();
+        a.href = el.dataset.src; a.download = el.dataset.name; a.click();
+      });
+    }
+    function descargarTodo() {
+      items.forEach(el => {
+        const a = document.createElement('a');
+        a.href = el.dataset.src; a.download = el.dataset.name; a.click();
       });
     }
     document.addEventListener('keydown', e => {
@@ -162,9 +236,13 @@
       if (e.key === 'ArrowRight') mover(1);
       if (e.key === 'ArrowLeft') mover(-1);
     });
-    document.getElementById('lb').addEventListener('click', function(e) {
-      if (e.target === this) cerrarLb();
+    const lb = document.getElementById('lb');
+    lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+    lb.addEventListener('touchend', e => {
+      const diff = touchX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) mover(diff > 0 ? 1 : -1);
     });
+    lb.addEventListener('click', e => { if (e.target === lb) cerrarLb(); });
   </script>
 </body>
 </html>

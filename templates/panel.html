@@ -7,42 +7,52 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
-    nav { display: flex; align-items: center; justify-content: space-between;
-          padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0; }
-    .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
-    .logo span { color: #999; font-weight: 300; }
-    a.salir { font-size: 11px; color: #bbb; text-decoration: none; letter-spacing: .04em; }
-    .main { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
-    h1 { font-size: 32px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 6px; }
-    .sub { font-size: 13px; color: #555; margin-bottom: 36px; }
-    .nueva-form { border: 0.5px solid #efefef; border-radius: 10px; padding: 24px; margin-bottom: 40px; }
-    .nueva-form h2 { font-size: 13px; font-weight: 500; letter-spacing: .04em;
-                     text-transform: uppercase; color: #888; margin-bottom: 16px; }
-    .campos { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-    input, select { border: 0.5px solid #ddd; border-radius: 6px; padding: 10px 12px;
-                    font-size: 13px; font-family: 'Inter', sans-serif; color: #111; outline: none; width: 100%; }
-    input:focus, select:focus { border-color: #111; }
-    .btn-crear { background: #111; color: #fff; border: none; border-radius: 6px;
-                 padding: 10px 20px; font-size: 12px; font-family: 'Inter', sans-serif;
-                 cursor: pointer; letter-spacing: .04em; }
-    .label-sec { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #888; margin-bottom: 12px; }
-    .sesion-card { display: flex; align-items: center; justify-content: space-between;
-                   padding: 14px 16px; border: 0.5px solid #f0f0f0; border-radius: 8px;
-                   margin-bottom: 8px; color: #111; transition: background .1s; }
-    .sesion-card:hover { background: #fafafa; }
-    .s-link { text-decoration: none; color: inherit; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    .s-name { font-size: 14px; font-weight: 500; }
-    .s-meta { font-size: 11px; color: #666; margin-top: 2px; }
-    .s-right { display: flex; align-items: center; gap: 12px; }
-    .s-arrow { color: #ccc; font-size: 18px; }
-    .s-count { font-size: 11px; color: #999; min-width: 60px; text-align: right; }
-    .btn-borrar { background: none; border: 0.5px solid #ddd; border-radius: 5px;
-                  padding: 5px 10px; font-size: 11px; color: #999; cursor: pointer;
-                  font-family: 'Inter', sans-serif; transition: all .15s; }
-    .btn-borrar:hover { border-color: #111; color: #111; }
-    .empty { text-align: center; padding: 48px 0; color: #999; font-size: 13px; }
-  </style>
+   body { font-family: 'Inter', sans-serif; background: #fff; color: #111;
+         -webkit-font-smoothing: antialiased; }
+   nav { display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 20px; border-bottom: 0.5px solid #f0f0f0; }
+   .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
+   .logo span { color: #999; font-weight: 300; }
+   a.salir { font-size: 11px; color: #bbb; text-decoration: none; letter-spacing: .04em; }
+   .main { max-width: 720px; margin: 0 auto; padding: 28px 20px; }
+   h1 { font-size: 28px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 6px; }
+   .sub { font-size: 13px; color: #555; margin-bottom: 28px; }
+   .nueva-form { border: 0.5px solid #efefef; border-radius: 10px;
+                padding: 20px; margin-bottom: 32px; }
+   .nueva-form h2 { font-size: 11px; font-weight: 500; letter-spacing: .06em;
+                   text-transform: uppercase; color: #888; margin-bottom: 14px; }
+   .campos { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+   @media (min-width: 560px) {
+   .campos { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+   }
+   input, select { border: 0.5px solid #ddd; border-radius: 6px; padding: 12px 14px;
+                  font-size: 14px; font-family: 'Inter', sans-serif; color: #111;
+                  outline: none; width: 100%; -webkit-appearance: none; }
+   input:focus, select:focus { border-color: #111; }
+   .btn-crear { background: #111; color: #fff; border: none; border-radius: 6px;
+               padding: 12px 20px; font-size: 13px; font-family: 'Inter', sans-serif;
+               cursor: pointer; letter-spacing: .04em; width: 100%; }
+   @media (min-width: 560px) { .btn-crear { width: auto; } }
+   .label-sec { font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+               color: #888; margin-bottom: 12px; }
+   .sesion-card { display: flex; align-items: center; justify-content: space-between;
+                 padding: 14px 16px; border: 0.5px solid #f0f0f0; border-radius: 8px;
+                 margin-bottom: 8px; color: #111; transition: background .1s; }
+   .sesion-card:hover { background: #fafafa; }
+   .s-link { text-decoration: none; color: inherit; flex: 1;
+            display: flex; flex-direction: column; gap: 2px; }
+   .s-name { font-size: 14px; font-weight: 500; }
+   .s-meta { font-size: 11px; color: #666; margin-top: 2px; }
+   .s-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+   .s-arrow { color: #ccc; font-size: 18px; }
+   .s-count { font-size: 11px; color: #999; white-space: nowrap; }
+   .btn-borrar { background: none; border: 0.5px solid #ddd; border-radius: 5px;
+                padding: 6px 10px; font-size: 11px; color: #999; cursor: pointer;
+                font-family: 'Inter', sans-serif; transition: all .15s;
+                min-height: 32px; }
+   .btn-borrar:hover { border-color: #111; color: #111; }
+   .empty { text-align: center; padding: 48px 0; color: #999; font-size: 13px; }
+</style>
 </head>
 <body>
   <nav>
