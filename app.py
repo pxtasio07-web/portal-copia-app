@@ -90,13 +90,6 @@ def nueva_sesion():
     conn.close()
     return redirect(url_for("panel"))
 
-@app.route("/debug-env")
-def debug_env():
-    return {
-        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
-        "preset": os.environ.get("CLOUDINARY_UPLOAD_PRESET"),
-    }
-
 @app.route("/sesion/<int:sid>")
 @login_required
 def ver_sesion(sid):
@@ -191,6 +184,12 @@ def borrar_foto(fid, sid):
     conn.close()
     return redirect(url_for("ver_sesion", sid=sid))
 
+@app.route("/debug-env")
+def debug_env():
+    return {
+        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        "preset": os.environ.get("CLOUDINARY_UPLOAD_PRESET"),
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)
