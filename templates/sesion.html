@@ -162,12 +162,9 @@
   </div>
 
   <script>
-    const CLOUD_NAME = "{{ cloud_name }}";
-    console.log("CLOUD_NAME:", CLOUD_NAME);
-    console.log("UPLOAD_PRESET:", UPLOAD_PRESET);
-    const UPLOAD_PRESET = "{{ upload_preset }}";
+    const CLOUD_NAME    = "{{ cloud_name }}";
+    const CLOUD_PRESET  = "{{ upload_preset }}";
     const SESSION_ID    = {{ sesion['id'] }};
-
     const dropzone    = document.getElementById('dropzone');
     const fileInput   = document.getElementById('file-input');
     const progSection = document.getElementById('progress-section');
@@ -226,7 +223,7 @@
           try {
             const fd = new FormData();
             fd.append('file', file);
-            fd.append('upload_preset', UPLOAD_PRESET);
+            fd.append('upload_preset', CLOUD_PRESET);
 
             const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
               method: 'POST', body: fd
