@@ -90,6 +90,12 @@ def nueva_sesion():
     conn.close()
     return redirect(url_for("panel"))
 
+@app.route("/debug-env")
+def debug_env():
+    return {
+        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        "preset": os.environ.get("CLOUDINARY_UPLOAD_PRESET"),
+    }
 
 @app.route("/sesion/<int:sid>")
 @login_required
@@ -106,6 +112,7 @@ def ver_sesion(sid):
     upload_preset = os.environ.get("CLOUDINARY_UPLOAD_PRESET", "allen-portal")
     return render_template("sesion.html", sesion=sesion, fotos=fotos,
                            cloud_name=cloud_name, upload_preset=upload_preset)
+
 
 
 # ── GUARDAR URL (llamado por JS después de subir a Cloudinary) ──
