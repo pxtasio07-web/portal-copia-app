@@ -3,81 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Allen · {{ sesion[1] }}</title>
+  <title>Allen · {{ sesion['cliente'] }}</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
-    nav { display: flex; align-items: center; justify-content: space-between;
-          padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0; }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0;
+    }
     .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
     .logo span { color: #999; font-weight: 300; }
     .nav-links { display: flex; gap: 20px; }
     .nav-links a { font-size: 11px; color: #bbb; text-decoration: none; letter-spacing: .04em; }
+
     .main { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
-    .top-row { display: flex; align-items: flex-start; justify-content: space-between;
-               margin-bottom: 32px; gap: 20px; }
+
+    .top-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 32px; gap: 20px;
+    }
     h1 { font-size: 28px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
     .meta { font-size: 12px; color: #bbb; }
-    .link-box { background: #f5f5f5; border-radius: 8px; padding: 14px 16px;
-                display: flex; flex-direction: column; gap: 8px; min-width: 220px; }
+
+    .link-box {
+      background: #f5f5f5; border-radius: 8px; padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 8px; min-width: 220px;
+    }
     .link-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #bbb; }
     .link-val { font-size: 11px; color: #555; font-family: monospace; word-break: break-all; }
-    .btn-copy { background: #111; color: #fff; border: none; border-radius: 5px;
-                padding: 7px 12px; font-size: 11px; font-family: 'Inter', sans-serif;
-                cursor: pointer; letter-spacing: .04em; align-self: flex-start; }
-    .section-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-                     color: #ccc; margin-bottom: 12px; }
-    .upload-area { border: 0.5px dashed #ccc; border-radius: 8px; padding: 32px;
-                   text-align: center; color: #ccc; font-size: 13px;
-                   margin-bottom: 24px; cursor: pointer; transition: border-color .15s; }
-    .upload-area:hover { border-color: #aaa; color: #aaa; }
-    .upload-area input { display: none; }
+    .btn-copy {
+      background: #111; color: #fff; border: none; border-radius: 5px;
+      padding: 7px 12px; font-size: 11px; font-family: 'Inter', sans-serif;
+      cursor: pointer; letter-spacing: .04em; align-self: flex-start;
+    }
+
+    .section-label {
+      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      color: #ccc; margin-bottom: 12px;
+    }
+
+    /* Upload */
+    .upload-area {
+      border: 0.5px dashed #ccc; border-radius: 8px; padding: 32px;
+      text-align: center; color: #ccc; font-size: 13px;
+      margin-bottom: 16px; cursor: pointer; transition: border-color .15s;
+      display: block; position: relative;
+    }
+    .upload-area:hover, .upload-area.dragover { border-color: #aaa; color: #aaa; }
+    .upload-area input {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
     .upload-icon { font-size: 28px; margin-bottom: 8px; }
-    .btn-subir { background: #111; color: #fff; border: none; border-radius: 6px;
-                 padding: 10px 20px; font-size: 12px; font-family: 'Inter', sans-serif;
-                 cursor: pointer; letter-spacing: .04em; margin-bottom: 32px; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-    .thumb { aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f0f0f0; }
-    .thumb img { width: 100%; height: 100%; object-fit: cover; }
-    .empty-fotos { color: #ccc; font-size: 13px; text-align: center; padding: 32px 0; }
+
+    /* Progress */
+    #progress-section { display: none; margin-bottom: 24px; }
+    .progress-bar-bg {
+      background: #f0f0f0; border-radius: 99px; height: 2px; overflow: hidden; margin-bottom: 10px;
+    }
+    .progress-bar-fill {
+      height: 100%; background: #111; border-radius: 99px;
+      transition: width 0.3s ease; width: 0%;
+    }
+    .progress-meta {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: #bbb; margin-bottom: 10px;
+    }
+    .progress-list { display: flex; flex-direction: column; gap: 4px; }
+    .progress-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; color: #bbb;
+    }
+    .progress-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .status-pending   { color: #ddd; }
+    .status-uploading { color: #888; }
+    .status-done      { color: #22c55e; }
+    .status-error     { color: #ef4444; }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 32px; }
     .thumb {
-      position: relative;
-      aspect-ratio: 1;
-      border-radius: 6px;
-      overflow: hidden;
-      background: #f0f0f0;
+      position: relative; aspect-ratio: 1;
+      border-radius: 6px; overflow: hidden; background: #f0f0f0;
     }
-
-    .thumb img {
-     width: 100%;
-     height: 100%;
-     object-fit: cover;
-     display: block;
-    }
-
-    .thumb form {
-     position: absolute;
-     top: 4px;
-     right: 4px;
-     z-index: 100;
-    }
-
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb form { position: absolute; top: 4px; right: 4px; z-index: 10; }
     .btn-del {
-     width: 24px;
-     height: 24px;
-     border: none;
-     border-radius: 50%;
-     background: rgba(0,0,0,.8);
-     color: white;
-     cursor: pointer;
-     font-size: 12px;
-    display: none;
+      width: 24px; height: 24px; border: none; border-radius: 50%;
+      background: rgba(0,0,0,.7); color: #fff; cursor: pointer;
+      font-size: 12px; display: none; line-height: 1;
     }
+    .thumb:hover .btn-del { display: block; }
 
-    .thumb:hover .btn-del {
-      display: block;
-    }
+    .empty-fotos { color: #ccc; font-size: 13px; text-align: center; padding: 32px 0; }
+    #foto-count-meta { display: inline; }
   </style>
 </head>
 <body>
@@ -92,58 +112,167 @@
   <div class="main">
     <div class="top-row">
       <div>
-        <h1>{{ sesion[1] }}</h1>
-        <p class="meta">{{ sesion[2] }} · {{ sesion[3] }} · {{ fotos|length }} fotos</p>
+        <h1>{{ sesion['cliente'] }}</h1>
+        <p class="meta">{{ sesion['tipo'] }} · {{ sesion['fecha'] }} · <span id="foto-count-meta">{{ fotos|length }}</span> fotos</p>
       </div>
       <div class="link-box">
         <div class="link-label">Link del cliente</div>
-        <div class="link-val" id="linkval">
-          {{ request.host_url }}g/{{ sesion[4] }}
-        </div>
-        <button class="btn-copy" onclick="copiarLink()">Copiar link</button>
+        <div class="link-val" id="linkval">{{ request.host_url }}g/{{ sesion['token'] }}</div>
+        <button class="btn-copy" onclick="copiarLink(event)">Copiar link</button>
       </div>
     </div>
 
+    <!-- Upload -->
     <div class="section-label">Subir fotos</div>
-    <form method="POST" action="/subir/{{ sesion[0] }}" enctype="multipart/form-data">
-      <label class="upload-area" for="fotos">
-        <div class="upload-icon">↑</div>
-        <div id="upload-label">Haz clic para seleccionar fotos</div>
-        <input type="file" name="fotos" id="fotos" multiple accept="image/*"
-               onchange="mostrarCantidad(this)">
-      </label>
-      <button class="btn-subir" type="submit">Subir fotos →</button>
-    </form>
+    <label class="upload-area" id="dropzone">
+      <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/webp">
+      <div class="upload-icon">↑</div>
+      <div id="upload-label">Haz clic o arrastra fotos aquí</div>
+    </label>
 
+    <!-- Progress -->
+    <div id="progress-section">
+      <div class="progress-meta">
+        <span id="progress-text">Subiendo…</span>
+        <span id="progress-count">0 / 0</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <div class="progress-list" id="progress-list"></div>
+    </div>
+
+    <!-- Fotos -->
     <div class="section-label">Fotos subidas</div>
-    {% if fotos %}
-      <div class="grid">
+    <div class="grid" id="foto-grid">
+      {% if fotos %}
         {% for f in fotos %}
         <div class="thumb">
-         <img src="/static/uploads/{{ f[2] }}" alt="foto">
-         <form method="POST" action="/borrar-foto/{{ f[0] }}/{{ sesion[0] }}"
-             onsubmit="return confirm('¿Borrar esta foto?')">
-               <button class="btn-del" type="submit">✕</button>
-             </form>
-           </div>
-          {% endfor %}
-       </div>
-    {% else %}
-      <div class="empty-fotos">Aún no hay fotos en esta sesión.</div>
-    {% endif %}
+          <img src="{{ f['cloudinary_url'] or ('/static/uploads/' + f['filename']) }}" loading="lazy" alt="">
+          <form method="POST" action="/borrar-foto/{{ f['id'] }}/{{ sesion['id'] }}"
+                onsubmit="return confirm('¿Borrar esta foto?')">
+            <button class="btn-del" type="submit">✕</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-fotos" id="empty-msg" style="grid-column:1/-1">Aún no hay fotos en esta sesión.</div>
+      {% endif %}
+    </div>
   </div>
 
   <script>
-    function copiarLink() {
+    const CLOUD_NAME    = "{{ cloud_name }}";
+    const UPLOAD_PRESET = "{{ upload_preset }}";
+    const SESSION_ID    = {{ sesion['id'] }};
+
+    const dropzone    = document.getElementById('dropzone');
+    const fileInput   = document.getElementById('file-input');
+    const progSection = document.getElementById('progress-section');
+    const progBar     = document.getElementById('progress-bar');
+    const progText    = document.getElementById('progress-text');
+    const progCount   = document.getElementById('progress-count');
+    const progList    = document.getElementById('progress-list');
+    const grid        = document.getElementById('foto-grid');
+    const emptyMsg    = document.getElementById('empty-msg');
+    const fotoCountEl = document.getElementById('foto-count-meta');
+    const uploadLabel = document.getElementById('upload-label');
+
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      handleFiles(Array.from(e.dataTransfer.files));
+    });
+    fileInput.addEventListener('change', () => {
+      handleFiles(Array.from(fileInput.files));
+    });
+
+    async function handleFiles(files) {
+      files = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f.name));
+      if (!files.length) return;
+
+      progSection.style.display = 'block';
+      progList.innerHTML = '';
+      uploadLabel.textContent = `${files.length} foto${files.length !== 1 ? 's' : ''} seleccionada${files.length !== 1 ? 's' : ''}`;
+      let done = 0;
+
+      const items = files.map((f, i) => {
+        const el = document.createElement('div');
+        el.className = 'progress-item';
+        el.innerHTML = `<span class="name">${f.name}</span><span class="status status-pending">En espera</span>`;
+        progList.appendChild(el);
+        return el;
+      });
+
+      progCount.textContent = `0 / ${files.length}`;
+      progBar.style.width = '0%';
+
+      const CONCURRENCY = 4;
+      let idx = 0;
+
+      async function uploadNext() {
+        while (idx < files.length) {
+          const i = idx++;
+          const file = files[i];
+          const item = items[i];
+          const statusEl = item.querySelector('.status');
+          statusEl.textContent = 'Subiendo…';
+          statusEl.className = 'status status-uploading';
+
+          try {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('upload_preset', UPLOAD_PRESET);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+              method: 'POST', body: fd
+            });
+            const data = await res.json();
+
+            if (data.secure_url) {
+              await fetch(`/guardar-foto/${SESSION_ID}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: data.secure_url, public_id: data.public_id })
+              });
+
+              statusEl.textContent = '✓';
+              statusEl.className = 'status status-done';
+
+              if (emptyMsg) emptyMsg.style.display = 'none';
+              const thumb = document.createElement('div');
+              thumb.className = 'thumb';
+              thumb.innerHTML = `<img src="${data.secure_url}" loading="lazy" alt="">`;
+              grid.appendChild(thumb);
+
+              fotoCountEl.textContent = parseInt(fotoCountEl.textContent || 0) + 1;
+            } else {
+              throw new Error(data.error?.message || 'Error');
+            }
+          } catch (err) {
+            statusEl.textContent = '✗ Error';
+            statusEl.className = 'status status-error';
+          }
+
+          done++;
+          progCount.textContent = `${done} / ${files.length}`;
+          progBar.style.width = `${(done / files.length) * 100}%`;
+        }
+      }
+
+      await Promise.all(Array.from({ length: Math.min(CONCURRENCY, files.length) }, uploadNext));
+      progText.textContent = `${done} foto${done !== 1 ? 's' : ''} subida${done !== 1 ? 's' : ''} ✓`;
+      fileInput.value = '';
+      uploadLabel.textContent = 'Haz clic o arrastra fotos aquí';
+    }
+
+    function copiarLink(event) {
       const txt = document.getElementById('linkval').innerText.trim();
       navigator.clipboard.writeText(txt);
       event.target.textContent = '✓ Copiado';
       setTimeout(() => event.target.textContent = 'Copiar link', 2000);
-    }
-    function mostrarCantidad(input) {
-      const n = input.files.length;
-      document.getElementById('upload-label').textContent =
-        n + (n === 1 ? ' foto seleccionada' : ' fotos seleccionadas');
     }
   </script>
 </body>

@@ -1,26 +1,27 @@
 import os
 import secrets
+import cloudinary
+import cloudinary.uploader
 from flask import (Flask, render_template, request,
-                   redirect, url_for, session, send_from_directory)
+                   redirect, url_for, session, jsonify)
 from database import init_db, get_conn
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = "allen-portal-secret-2024"
+app.secret_key = os.environ.get("SECRET_KEY", "allen-portal-secret-2024")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "static/uploads")
-ALLOWED = {"jpg", "jpeg", "png", "webp"}
-USUARIO = "allen"
-PASSWORD = "Jhamal_0729"
+# ── CLOUDINARY CONFIG ───────────────────────────
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+USUARIO = os.environ.get("PORTAL_USER", "allen")
+PASSWORD = os.environ.get("PORTAL_PASS", "Jhamal_0729")
+
 init_db()
-
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED
 
 
 def login_required(f):
@@ -101,25 +102,30 @@ def ver_sesion(sid):
         "SELECT * FROM fotos WHERE sesion_id=?", (sid,)
     ).fetchall()
     conn.close()
-    return render_template("sesion.html", sesion=sesion, fotos=fotos)
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    upload_preset = os.environ.get("CLOUDINARY_UPLOAD_PRESET", "allen-portal")
+    return render_template("sesion.html", sesion=sesion, fotos=fotos,
+                           cloud_name=cloud_name, upload_preset=upload_preset)
 
 
-@app.route("/subir/<int:sid>", methods=["POST"])
+# ── GUARDAR URL (llamado por JS después de subir a Cloudinary) ──
+
+@app.route("/guardar-foto/<int:sid>", methods=["POST"])
 @login_required
-def subir_fotos(sid):
-    archivos = request.files.getlist("fotos")
+def guardar_foto(sid):
+    data = request.get_json()
+    url = data.get("url")
+    public_id = data.get("public_id")
+    if not url:
+        return jsonify({"error": "URL requerida"}), 400
     conn = get_conn()
-    for f in archivos:
-        if f and allowed_file(f.filename):
-            nombre = secure_filename(f.filename)
-            f.save(os.path.join(UPLOAD_FOLDER, nombre))
-            conn.execute(
-                "INSERT INTO fotos (sesion_id, filename) VALUES (?,?)",
-                (sid, nombre)
-            )
+    conn.execute(
+        "INSERT INTO fotos (sesion_id, filename, cloudinary_url, public_id) VALUES (?,?,?,?)",
+        (sid, public_id or url.split("/")[-1], url, public_id)
+    )
     conn.commit()
     conn.close()
-    return redirect(url_for("ver_sesion", sid=sid))
+    return jsonify({"ok": True})
 
 
 # ── GALERÍA CLIENTE ─────────────────────────────
@@ -139,15 +145,21 @@ def galeria(token):
     return render_template("galeria.html", sesion=sesion, fotos=fotos)
 
 
+# ── BORRAR ──────────────────────────────────────
+
 @app.route("/borrar/<int:sid>", methods=["POST"])
 @login_required
 def borrar_sesion(sid):
     conn = get_conn()
-    fotos = conn.execute("SELECT filename FROM fotos WHERE sesion_id=?", (sid,)).fetchall()
+    fotos = conn.execute(
+        "SELECT public_id FROM fotos WHERE sesion_id=?", (sid,)
+    ).fetchall()
     for f in fotos:
-        path = os.path.join(UPLOAD_FOLDER, f[0])
-        if os.path.exists(path):
-            os.remove(path)
+        if f[0]:
+            try:
+                cloudinary.uploader.destroy(f[0])
+            except Exception:
+                pass
     conn.execute("DELETE FROM fotos WHERE sesion_id=?", (sid,))
     conn.execute("DELETE FROM sesiones WHERE id=?", (sid,))
     conn.commit()
@@ -159,13 +171,16 @@ def borrar_sesion(sid):
 @login_required
 def borrar_foto(fid, sid):
     conn = get_conn()
-    foto = conn.execute("SELECT filename FROM fotos WHERE id=?", (fid,)).fetchone()
-    if foto:
-        path = os.path.join(UPLOAD_FOLDER, foto[0])
-        if os.path.exists(path):
-            os.remove(path)
-        conn.execute("DELETE FROM fotos WHERE id=?", (fid,))
-        conn.commit()
+    foto = conn.execute(
+        "SELECT public_id FROM fotos WHERE id=?", (fid,)
+    ).fetchone()
+    if foto and foto[0]:
+        try:
+            cloudinary.uploader.destroy(foto[0])
+        except Exception:
+            pass
+    conn.execute("DELETE FROM fotos WHERE id=?", (fid,))
+    conn.commit()
     conn.close()
     return redirect(url_for("ver_sesion", sid=sid))
 
