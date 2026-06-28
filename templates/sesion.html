@@ -7,97 +7,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; -webkit-font-smoothing: antialiased; }
 
-    nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0;
-    }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 0.5px solid #f0f0f0; }
     .logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #111; }
     .logo span { color: #999; font-weight: 300; }
     .nav-links { display: flex; gap: 20px; }
     .nav-links a { font-size: 11px; color: #bbb; text-decoration: none; letter-spacing: .04em; }
 
-    .main { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+    .main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
 
-    .top-row {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 32px; gap: 20px;
-    }
-    h1 { font-size: 28px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
+    .top-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 40px; gap: 20px; }
+    h1 { font-size: 26px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
     .meta { font-size: 12px; color: #bbb; }
 
-    .link-box {
-      background: #f5f5f5; border-radius: 8px; padding: 14px 16px;
-      display: flex; flex-direction: column; gap: 8px; min-width: 220px;
-    }
+    .link-box { background: #f5f5f5; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 220px; }
     .link-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #bbb; }
     .link-val { font-size: 11px; color: #555; font-family: monospace; word-break: break-all; }
-    .btn-copy {
-      background: #111; color: #fff; border: none; border-radius: 5px;
-      padding: 7px 12px; font-size: 11px; font-family: 'Inter', sans-serif;
-      cursor: pointer; letter-spacing: .04em; align-self: flex-start;
-    }
+    .btn-copy { background: #111; color: #fff; border: none; border-radius: 5px; padding: 7px 12px; font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer; letter-spacing: .04em; align-self: flex-start; }
 
-    .section-label {
-      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-      color: #ccc; margin-bottom: 12px;
-    }
+    .section-label { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #ccc; margin-bottom: 12px; margin-top: 32px; }
 
-    /* Upload */
-    .upload-area {
-      border: 0.5px dashed #ccc; border-radius: 8px; padding: 32px;
-      text-align: center; color: #ccc; font-size: 13px;
-      margin-bottom: 16px; cursor: pointer; transition: border-color .15s;
-      display: block; position: relative;
-    }
+    /* Portada */
+    .portada-box { border: 0.5px solid #e8e8e8; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+    .portada-preview { position: relative; aspect-ratio: 16/9; background: #f5f5f5; display: flex; align-items: center; justify-content: center; }
+    .portada-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .portada-placeholder { text-align: center; color: #ccc; font-size: 12px; }
+    .portada-placeholder .icon { font-size: 28px; margin-bottom: 8px; }
+    .portada-actions { padding: 12px 16px; display: flex; align-items: center; gap: 10px; background: #fafafa; border-top: 0.5px solid #f0f0f0; }
+    .btn-portada { background: #111; color: #fff; border: none; border-radius: 5px; padding: 7px 14px; font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer; letter-spacing: .04em; position: relative; overflow: hidden; }
+    .btn-portada input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .portada-status { font-size: 11px; color: #999; }
+
+    /* Mensaje */
+    .mensaje-form { display: flex; flex-direction: column; gap: 10px; }
+    .mensaje-textarea { width: 100%; min-height: 90px; border: 0.5px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 13px; color: #333; resize: vertical; outline: none; transition: border-color .15s; }
+    .mensaje-textarea:focus { border-color: #aaa; }
+    .mensaje-textarea::placeholder { color: #ccc; }
+    .mensaje-hint { font-size: 11px; color: #bbb; }
+    .btn-guardar { background: #111; color: #fff; border: none; border-radius: 6px; padding: 9px 18px; font-size: 11px; font-family: 'Inter', sans-serif; cursor: pointer; letter-spacing: .04em; align-self: flex-start; }
+
+    /* Upload fotos */
+    .upload-area { border: 0.5px dashed #ccc; border-radius: 8px; padding: 32px; text-align: center; color: #ccc; font-size: 13px; margin-top: 4px; cursor: pointer; transition: border-color .15s; display: block; position: relative; }
     .upload-area:hover, .upload-area.dragover { border-color: #aaa; color: #aaa; }
-    .upload-area input {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
+    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .upload-icon { font-size: 28px; margin-bottom: 8px; }
 
     /* Progress */
-    #progress-section { display: none; margin-bottom: 24px; }
-    .progress-bar-bg {
-      background: #f0f0f0; border-radius: 99px; height: 2px; overflow: hidden; margin-bottom: 10px;
-    }
-    .progress-bar-fill {
-      height: 100%; background: #111; border-radius: 99px;
-      transition: width 0.3s ease; width: 0%;
-    }
-    .progress-meta {
-      display: flex; justify-content: space-between;
-      font-size: 11px; color: #bbb; margin-bottom: 10px;
-    }
+    #progress-section { display: none; margin-top: 16px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: #bbb; margin-bottom: 8px; }
+    .progress-bar-bg { background: #f0f0f0; border-radius: 99px; height: 2px; overflow: hidden; margin-bottom: 10px; }
+    .progress-bar-fill { height: 100%; background: #111; border-radius: 99px; transition: width 0.3s ease; width: 0%; }
     .progress-list { display: flex; flex-direction: column; gap: 4px; }
-    .progress-item {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 11px; color: #bbb;
-    }
+    .progress-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #bbb; }
     .progress-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .status-pending   { color: #ddd; }
+    .status-pending { color: #ddd; }
     .status-uploading { color: #888; }
-    .status-done      { color: #22c55e; }
-    .status-error     { color: #ef4444; }
+    .status-done { color: #22c55e; }
+    .status-error { color: #ef4444; }
 
     /* Grid */
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 32px; }
-    .thumb {
-      position: relative; aspect-ratio: 1;
-      border-radius: 6px; overflow: hidden; background: #f0f0f0;
-    }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
+    .thumb { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f0f0f0; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .thumb form { position: absolute; top: 4px; right: 4px; z-index: 10; }
-    .btn-del {
-      width: 24px; height: 24px; border: none; border-radius: 50%;
-      background: rgba(0,0,0,.7); color: #fff; cursor: pointer;
-      font-size: 12px; display: none; line-height: 1;
-    }
+    .btn-del { width: 24px; height: 24px; border: none; border-radius: 50%; background: rgba(0,0,0,.7); color: #fff; cursor: pointer; font-size: 12px; display: none; line-height: 1; }
     .thumb:hover .btn-del { display: block; }
+    .thumb .portada-badge { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,.75); color: #fff; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; }
 
     .empty-fotos { color: #ccc; font-size: 13px; text-align: center; padding: 32px 0; }
-    #foto-count-meta { display: inline; }
   </style>
 </head>
 <body>
@@ -122,7 +100,40 @@
       </div>
     </div>
 
-    <!-- Upload -->
+    <!-- PORTADA -->
+    <div class="section-label">Imagen de portada</div>
+    <div class="portada-box">
+      <div class="portada-preview" id="portada-preview">
+        {% if sesion['portada_url'] %}
+          <img src="{{ sesion['portada_url'] }}" id="portada-img" alt="portada">
+        {% else %}
+          <div class="portada-placeholder" id="portada-placeholder">
+            <div class="icon">🖼</div>
+            <div>La primera foto que subes se usa como portada</div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="portada-actions">
+        <button class="btn-portada">
+          Subir portada
+          <input type="file" id="portada-input" accept="image/jpeg,image/png,image/webp">
+        </button>
+        <span class="portada-status" id="portada-status">
+          {% if sesion['portada_url'] %}Portada activa{% else %}Sin portada{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- MENSAJE -->
+    <div class="section-label">Mensaje al cliente</div>
+    <form method="POST" action="/editar/{{ sesion['id'] }}" class="mensaje-form">
+      <input type="hidden" name="portada_url" id="portada-url-input" value="{{ sesion['portada_url'] or '' }}">
+      <textarea class="mensaje-textarea" name="mensaje" placeholder="Escribe un mensaje personal para el cliente, o déjalo vacío para no mostrar nada…">{{ sesion['mensaje'] or '' }}</textarea>
+      <span class="mensaje-hint">Si lo dejas vacío no aparece ningún mensaje en la galería.</span>
+      <button class="btn-guardar" type="submit">Guardar cambios</button>
+    </form>
+
+    <!-- FOTOS -->
     <div class="section-label">Subir fotos</div>
     <label class="upload-area" id="dropzone">
       <input type="file" id="file-input" multiple accept="image/jpeg,image/png,image/webp">
@@ -130,25 +141,24 @@
       <div id="upload-label">Haz clic o arrastra fotos aquí</div>
     </label>
 
-    <!-- Progress -->
     <div id="progress-section">
       <div class="progress-meta">
         <span id="progress-text">Subiendo…</span>
         <span id="progress-count">0 / 0</span>
       </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progress-bar"></div>
-      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
       <div class="progress-list" id="progress-list"></div>
     </div>
 
-    <!-- Fotos -->
-    <div class="section-label">Fotos subidas</div>
+    <div class="section-label" style="margin-top:24px;">Fotos subidas</div>
     <div class="grid" id="foto-grid">
       {% if fotos %}
         {% for f in fotos %}
         <div class="thumb">
           <img src="{{ f['cloudinary_url'] or ('/static/uploads/' + f['filename']) }}" loading="lazy" alt="">
+          {% if loop.first and not sesion['portada_url'] %}
+            <span class="portada-badge">portada</span>
+          {% endif %}
           <form method="POST" action="/borrar-foto/{{ f['id'] }}/{{ sesion['id'] }}"
                 onsubmit="return confirm('¿Borrar esta foto?')">
             <button class="btn-del" type="submit">✕</button>
@@ -156,7 +166,7 @@
         </div>
         {% endfor %}
       {% else %}
-        <div class="empty-fotos" id="empty-msg" style="grid-column:1/-1">Aún no hay fotos en esta sesión.</div>
+        <div class="empty-fotos" id="empty-msg" style="grid-column:1/-1">Aún no hay fotos.</div>
       {% endif %}
     </div>
   </div>
@@ -165,6 +175,33 @@
     const CLOUD_NAME    = "{{ cloud_name }}";
     const CLOUD_PRESET  = "{{ upload_preset }}";
     const SESSION_ID    = {{ sesion['id'] }};
+
+    // ── Portada ──────────────────────────────────
+    document.getElementById('portada-input').addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+      const status = document.getElementById('portada-status');
+      status.textContent = 'Subiendo portada…';
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('upload_preset', CLOUD_PRESET);
+        const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.secure_url) {
+          document.getElementById('portada-url-input').value = data.secure_url;
+          const preview = document.getElementById('portada-preview');
+          preview.innerHTML = `<img src="${data.secure_url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="portada">`;
+          status.textContent = '✓ Lista — guarda los cambios para aplicar';
+        } else {
+          status.textContent = '✗ Error al subir';
+        }
+      } catch(e) {
+        status.textContent = '✗ Error al subir';
+      }
+    });
+
+    // ── Fotos ─────────────────────────────────────
     const dropzone    = document.getElementById('dropzone');
     const fileInput   = document.getElementById('file-input');
     const progSection = document.getElementById('progress-section');
@@ -179,88 +216,63 @@
 
     dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-    dropzone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropzone.classList.remove('dragover');
-      handleFiles(Array.from(e.dataTransfer.files));
-    });
-    fileInput.addEventListener('change', () => {
-      handleFiles(Array.from(fileInput.files));
-    });
+    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); handleFiles(Array.from(e.dataTransfer.files)); });
+    fileInput.addEventListener('change', () => handleFiles(Array.from(fileInput.files)));
 
     async function handleFiles(files) {
       files = files.filter(f => /\.(jpe?g|png|webp)$/i.test(f.name));
       if (!files.length) return;
-
       progSection.style.display = 'block';
       progList.innerHTML = '';
       uploadLabel.textContent = `${files.length} foto${files.length !== 1 ? 's' : ''} seleccionada${files.length !== 1 ? 's' : ''}`;
       let done = 0;
-
-      const items = files.map((f, i) => {
+      const items = files.map(f => {
         const el = document.createElement('div');
         el.className = 'progress-item';
         el.innerHTML = `<span class="name">${f.name}</span><span class="status status-pending">En espera</span>`;
         progList.appendChild(el);
         return el;
       });
-
       progCount.textContent = `0 / ${files.length}`;
       progBar.style.width = '0%';
-
       const CONCURRENCY = 4;
       let idx = 0;
-
       async function uploadNext() {
         while (idx < files.length) {
-          const i = idx++;
-          const file = files[i];
-          const item = items[i];
+          const i = idx++, file = files[i], item = items[i];
           const statusEl = item.querySelector('.status');
           statusEl.textContent = 'Subiendo…';
           statusEl.className = 'status status-uploading';
-
           try {
             const fd = new FormData();
             fd.append('file', file);
             fd.append('upload_preset', CLOUD_PRESET);
-
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-              method: 'POST', body: fd
-            });
+            const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
             const data = await res.json();
-
             if (data.secure_url) {
               await fetch(`/guardar-foto/${SESSION_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: data.secure_url, public_id: data.public_id })
               });
-
               statusEl.textContent = '✓';
               statusEl.className = 'status status-done';
-
               if (emptyMsg) emptyMsg.style.display = 'none';
               const thumb = document.createElement('div');
               thumb.className = 'thumb';
               thumb.innerHTML = `<img src="${data.secure_url}" loading="lazy" alt="">`;
               grid.appendChild(thumb);
-
               fotoCountEl.textContent = parseInt(fotoCountEl.textContent || 0) + 1;
-            } else {
-              throw new Error(data.error?.message || 'Error');
-            }
-          } catch (err) {
-            statusEl.textContent = '✗ Error';
-            statusEl.className = 'status status-error';
+            } else throw new Error();
+          } catch {
+            item.querySelector('.status').textContent = '✗ Error';
+            item.querySelector('.status').className = 'status status-error';
           }
-
           done++;
           progCount.textContent = `${done} / ${files.length}`;
           progBar.style.width = `${(done / files.length) * 100}%`;
         }
       }
-
       await Promise.all(Array.from({ length: Math.min(CONCURRENCY, files.length) }, uploadNext));
       progText.textContent = `${done} foto${done !== 1 ? 's' : ''} subida${done !== 1 ? 's' : ''} ✓`;
       fileInput.value = '';
@@ -268,8 +280,7 @@
     }
 
     function copiarLink(event) {
-      const txt = document.getElementById('linkval').innerText.trim();
-      navigator.clipboard.writeText(txt);
+      navigator.clipboard.writeText(document.getElementById('linkval').innerText.trim());
       event.target.textContent = '✓ Copiado';
       setTimeout(() => event.target.textContent = 'Copiar link', 2000);
     }

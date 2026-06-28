@@ -7,439 +7,287 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
+      --bg: #f7f5f2;
       --black: #0d0d0d;
       --white: #ffffff;
-      --gray-light: #f5f5f5;
-      --gray-mid: #e8e8e8;
-      --gray-text: #999;
-      --gray-muted: #ccc;
-      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --gray-text: #888;
+      --gray-muted: #bbb;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--white);
-      color: var(--black);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    /* ── HERO ───────────────────────────────── */
+    /* ── HERO PORTADA ─────────────────────────── */
     .hero {
-      min-height: 100svh;
+      position: relative;
+      height: 96svh;
+      min-height: 500px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 64px 24px;
-      position: relative;
+      justify-content: flex-end;
+      padding-bottom: 56px;
       overflow: hidden;
     }
 
-    .hero::before {
-      content: '';
+    .hero-bg {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 60% 50% at 50% 60%, #f0ece6 0%, transparent 70%);
+      background: #1a1a1a;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
       opacity: 0;
-      animation: fadeIn 2s var(--ease-out) 0.3s forwards;
+      transition: opacity 1.2s ease;
+    }
+    .hero-bg img.loaded { opacity: 1; }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.08) 0%,
+        rgba(0,0,0,0.0) 30%,
+        rgba(0,0,0,0.55) 75%,
+        rgba(0,0,0,0.78) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      padding: 0 24px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 1s var(--ease) 0.6s forwards;
     }
 
     .hero-brand {
       font-size: 10px;
       letter-spacing: .2em;
       text-transform: uppercase;
-      color: var(--gray-text);
-      margin-bottom: 40px;
-      position: relative;
-      opacity: 0;
-      animation: slideUp 0.9s var(--ease-out) 0.2s forwards;
-    }
-
-    .hero-greeting {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 13vw, 86px);
-      font-weight: 300;
-      color: var(--black);
-      line-height: 1.0;
-      letter-spacing: -.02em;
+      color: rgba(255,255,255,.5);
       margin-bottom: 20px;
-      position: relative;
-      opacity: 0;
-      animation: slideUp 1.1s var(--ease-out) 0.4s forwards;
     }
 
-    .hero-greeting em {
-      font-style: italic;
-      color: #444;
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 12vw, 80px);
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.0;
+      letter-spacing: -.01em;
+      margin-bottom: 14px;
     }
+    .hero-title em { font-style: italic; }
 
-    .hero-tipo {
+    .hero-sub {
       font-size: 11px;
-      color: var(--gray-text);
+      color: rgba(255,255,255,.55);
       letter-spacing: .1em;
       text-transform: uppercase;
-      margin-bottom: 0;
-      position: relative;
-      opacity: 0;
-      animation: slideUp 0.9s var(--ease-out) 0.6s forwards;
+      margin-bottom: 32px;
     }
 
-    .hero-divider {
-      width: 0.5px;
-      height: 56px;
-      background: linear-gradient(to bottom, transparent, #ccc 40%, transparent);
-      margin: 40px auto 16px;
-      opacity: 0;
-      animation: fadeIn 1s var(--ease-out) 1.2s forwards;
-    }
-
-    .hero-scroll-label {
+    .hero-scroll {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,.4);
       font-size: 10px;
       letter-spacing: .12em;
       text-transform: uppercase;
-      color: var(--gray-muted);
       opacity: 0;
-      animation: fadeIn 1s var(--ease-out) 1.4s forwards;
+      animation: fadeIn 1s ease 1.4s forwards;
+    }
+    .hero-scroll-line {
+      width: 0.5px;
+      height: 36px;
+      background: rgba(255,255,255,.3);
     }
 
-    /* ── MENSAJE ────────────────────────────── */
+    /* ── MENSAJE ──────────────────────────────── */
     .mensaje {
-      padding: 80px 32px;
-      max-width: 600px;
+      padding: 72px 32px 64px;
+      max-width: 580px;
       margin: 0 auto;
       text-align: center;
-      border-top: 0.5px solid var(--gray-mid);
     }
-
     .mensaje-text {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(22px, 4vw, 30px);
       font-weight: 300;
-      color: #333;
+      color: #3a3530;
       line-height: 1.65;
       font-style: italic;
     }
-
     .mensaje-firma {
-      margin-top: 32px;
+      margin-top: 28px;
       font-size: 10px;
       color: var(--gray-muted);
       letter-spacing: .12em;
       text-transform: uppercase;
     }
 
-    /* ── GALERÍA HEADER ─────────────────────── */
+    /* ── GALERÍA ──────────────────────────────── */
     .galeria-header {
-      padding: 0 24px 24px;
-      max-width: 960px;
+      padding: 0 20px 20px;
+      max-width: 980px;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-top: 0.5px solid #e5e1dc;
+      padding-top: 40px;
     }
-
-    .galeria-count {
-      font-size: 11px;
-      color: var(--gray-text);
-      letter-spacing: .04em;
-    }
-
+    .galeria-count { font-size: 11px; color: var(--gray-text); letter-spacing: .04em; }
     .btn-sel-all {
-      font-size: 11px;
-      color: #555;
-      background: none;
-      border: 0.5px solid #ddd;
-      border-radius: 20px;
-      padding: 7px 16px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      letter-spacing: .03em;
-      transition: border-color .15s, color .15s;
+      font-size: 11px; color: #555; background: none;
+      border: 0.5px solid #d5d1cc; border-radius: 20px;
+      padding: 7px 16px; cursor: pointer; font-family: 'Inter', sans-serif;
+      letter-spacing: .03em; transition: border-color .15s, color .15s;
     }
-    .btn-sel-all:hover { border-color: #aaa; color: #222; }
+    .btn-sel-all:hover { border-color: #999; color: #111; }
 
-    /* ── MASONRY ────────────────────────────── */
+    /* Pinterest masonry */
     .masonry {
       columns: 2;
-      column-gap: 4px;
-      padding: 0 24px;
-      max-width: 960px;
+      column-gap: 6px;
+      padding: 0 20px 32px;
+      max-width: 980px;
       margin: 0 auto;
     }
-    @media (min-width: 600px)  { .masonry { columns: 3; } }
-    @media (min-width: 900px)  { .masonry { columns: 4; } }
+    @media (min-width: 580px)  { .masonry { columns: 3; } }
+    @media (min-width: 860px)  { .masonry { columns: 4; } }
 
     .foto-item {
       break-inside: avoid;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      border-radius: 3px;
+      border-radius: 6px;
+      background: #e8e4df;
       opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+      transform: translateY(20px);
+      transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
     }
-
-    .foto-item.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .foto-item.visible { opacity: 1; transform: translateY(0); }
 
     .foto-item img {
-      width: 100%;
-      display: block;
-      transition: transform 0.5s var(--ease-out), filter 0.3s ease;
-      will-change: transform;
+      width: 100%; display: block;
+      transition: transform 0.5s var(--ease), filter 0.3s ease;
     }
-
-    .foto-item:hover img {
-      transform: scale(1.03);
-      filter: brightness(0.88);
-    }
+    .foto-item:hover img { transform: scale(1.04); filter: brightness(0.85); }
 
     .foto-item .check {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.92);
-      border: 0.5px solid rgba(0,0,0,.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: transparent;
-      transition: all .2s var(--ease-out);
-      opacity: 0;
-      z-index: 2;
-      backdrop-filter: blur(4px);
+      position: absolute; bottom: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,.9); border: 0.5px solid rgba(0,0,0,.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: transparent;
+      transition: all .2s var(--ease);
+      opacity: 0; z-index: 2;
     }
-
     .foto-item:hover .check { opacity: 1; }
-    .foto-item.sel .check {
-      opacity: 1;
-      background: var(--black);
-      border-color: var(--black);
-      color: var(--white);
-    }
-    .foto-item.sel img {
-      filter: brightness(0.75) saturate(0.8);
-    }
+    .foto-item.sel .check { opacity: 1; background: var(--black); border-color: var(--black); color: #fff; }
+    .foto-item.sel img { filter: brightness(0.72) saturate(0.7); }
 
-    /* ── BARRA DESCARGA ─────────────────────── */
+    /* ── BARRA DESCARGA ───────────────────────── */
     .descarga {
-      position: sticky;
-      bottom: 0;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 0.5px solid var(--gray-mid);
+      position: sticky; bottom: 0;
+      background: rgba(247,245,242,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 0.5px solid #e0dbd5;
       padding: 14px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      z-index: 10;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; z-index: 10;
     }
-
-    .sel-info {
-      font-size: 12px;
-      color: var(--gray-text);
-      white-space: nowrap;
-    }
+    .sel-info { font-size: 12px; color: var(--gray-text); white-space: nowrap; }
     .sel-info span { color: var(--black); font-weight: 500; }
-
     .btns-dl { display: flex; gap: 8px; }
-
     .btn-dl {
-      background: var(--black);
-      color: var(--white);
-      border: none;
-      border-radius: 6px;
-      padding: 10px 18px;
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      letter-spacing: .04em;
-      white-space: nowrap;
+      background: var(--black); color: var(--white); border: none;
+      border-radius: 6px; padding: 10px 18px; font-size: 11px;
+      font-family: 'Inter', sans-serif; cursor: pointer;
+      letter-spacing: .04em; white-space: nowrap;
       transition: background .15s, transform .1s;
     }
     .btn-dl:hover { background: #222; }
     .btn-dl:active { transform: scale(0.97); }
-    .btn-dl:disabled { background: #ddd; color: #aaa; cursor: default; transform: none; }
-
+    .btn-dl:disabled { background: #d5d1cc; color: #aaa; cursor: default; transform: none; }
     .btn-dl-all {
-      background: var(--white);
-      color: var(--black);
-      border: 0.5px solid #ddd;
-      border-radius: 6px;
-      padding: 10px 18px;
-      font-size: 11px;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      letter-spacing: .04em;
-      white-space: nowrap;
+      background: transparent; color: var(--black);
+      border: 0.5px solid #c5c1bc; border-radius: 6px;
+      padding: 10px 18px; font-size: 11px; font-family: 'Inter', sans-serif;
+      cursor: pointer; letter-spacing: .04em; white-space: nowrap;
       transition: border-color .15s, transform .1s;
     }
-    .btn-dl-all:hover { border-color: #aaa; }
+    .btn-dl-all:hover { border-color: #888; }
     .btn-dl-all:active { transform: scale(0.97); }
 
-    /* ── FOOTER ─────────────────────────────── */
-    .footer {
-      text-align: center;
-      padding: 64px 24px 56px;
-      border-top: 0.5px solid #f0f0f0;
-      margin-top: 48px;
-    }
-    .footer-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 300;
-      color: var(--black);
-      letter-spacing: .04em;
-      margin-bottom: 12px;
-    }
-    .footer-link {
-      font-size: 10px;
-      color: var(--gray-muted);
-      text-decoration: none;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      transition: color .15s;
-    }
+    /* ── FOOTER ───────────────────────────────── */
+    .footer { text-align: center; padding: 64px 24px 56px; border-top: 0.5px solid #e5e1dc; margin-top: 16px; }
+    .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--black); letter-spacing: .04em; margin-bottom: 12px; }
+    .footer-link { font-size: 10px; color: var(--gray-muted); text-decoration: none; letter-spacing: .12em; text-transform: uppercase; transition: color .15s; }
     .footer-link:hover { color: var(--black); }
 
-    /* ── LIGHTBOX ───────────────────────────── */
-    .lb {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(8,8,8,0);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      touch-action: pan-y;
-      transition: background 0.3s ease;
-    }
-    .lb.open {
-      display: flex;
-      background: rgba(8,8,8,0.97);
-    }
-
-    .lb img {
-      max-width: 92vw;
-      max-height: 88vh;
-      object-fit: contain;
-      border-radius: 2px;
-      user-select: none;
-      pointer-events: none;
-      opacity: 0;
-      transform: scale(0.96);
-      transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
-    }
-    .lb img.loaded {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .lb-close {
-      position: fixed;
-      top: 20px;
-      right: 24px;
-      color: rgba(255,255,255,.5);
-      font-size: 20px;
-      cursor: pointer;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: color .15s, background .15s;
-    }
+    /* ── LIGHTBOX ─────────────────────────────── */
+    .lb { display: none; position: fixed; inset: 0; background: rgba(6,5,4,0.97); z-index: 999; align-items: center; justify-content: center; touch-action: pan-y; }
+    .lb.open { display: flex; }
+    .lb img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 2px; user-select: none; pointer-events: none; opacity: 0; transform: scale(0.96); transition: opacity 0.25s ease, transform 0.25s var(--ease); }
+    .lb img.loaded { opacity: 1; transform: scale(1); }
+    .lb-close { position: fixed; top: 20px; right: 24px; color: rgba(255,255,255,.4); font-size: 20px; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: color .15s, background .15s; }
     .lb-close:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .lb-prev, .lb-next { position: fixed; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,.25); font-size: 36px; cursor: pointer; padding: 24px 20px; user-select: none; transition: color .15s; }
+    .lb-prev:hover, .lb-next:hover { color: rgba(255,255,255,.8); }
+    .lb-prev { left: 0; } .lb-next { right: 0; }
+    .lb-counter { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,.25); letter-spacing: .08em; }
 
-    .lb-prev, .lb-next {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(255,255,255,.3);
-      font-size: 36px;
-      cursor: pointer;
-      padding: 24px 20px;
-      user-select: none;
-      transition: color .15s;
-    }
-    .lb-prev:hover, .lb-next:hover { color: rgba(255,255,255,.85); }
-    .lb-prev { left: 0; }
-    .lb-next { right: 0; }
-
-    .lb-counter {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      color: rgba(255,255,255,.3);
-      letter-spacing: .08em;
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* ── KEYFRAMES ──────────────────────────── */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    }
+    /* ── KEYFRAMES ────────────────────────────── */
+    @keyframes slideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:0.01ms!important; transition-duration:0.01ms!important; } }
   </style>
 </head>
 <body>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-brand">Allen Photography</div>
-    <h1 class="hero-greeting">
-      Hola,<br><em>{{ sesion['cliente'] }}.</em>
-    </h1>
-    <p class="hero-tipo">{{ sesion['tipo'] }} · {{ sesion['fecha'] }}</p>
-    <div class="hero-divider"></div>
-    <span class="hero-scroll-label">Ver fotos</span>
+    <div class="hero-bg">
+      {% set portada = sesion['portada_url'] or (fotos[0]['cloudinary_url'] if fotos else None) %}
+      {% if portada %}
+        <img src="{{ portada }}" alt="portada" onload="this.classList.add('loaded')">
+      {% endif %}
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-brand">Allen Photography</div>
+      <h1 class="hero-title">
+        Tu sesión<br>está lista,<br><em>{{ sesion['cliente'] }}.</em>
+      </h1>
+      <p class="hero-sub">{{ sesion['tipo'] }} · {{ sesion['fecha'] }}</p>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      Ver fotos
+    </div>
   </section>
 
-  <!-- MENSAJE -->
+  <!-- MENSAJE (solo si hay texto) -->
+  {% if sesion['mensaje'] %}
   <section class="mensaje">
-    {% set tipo = sesion['tipo'] | lower %}
-    {% if "quinceañera" in tipo or "quince" in tipo %}
-      <p class="mensaje-text">Quince años son un momento que solo ocurre una vez.<br>Fue un honor estar ahí para capturarlo contigo.</p>
-    {% elif "graduaci" in tipo %}
-      <p class="mensaje-text">Gracias por permitirme ser parte de este logro.<br>Que estas imágenes te recuerden siempre lo lejos que has llegado.</p>
-    {% elif "familia" in tipo %}
-      <p class="mensaje-text">Las familias crecen, cambian y siguen adelante.<br>Estas fotos guardan cómo eran hoy.</p>
-    {% elif "boda" in tipo %}
-      <p class="mensaje-text">Un día así merece ser recordado en cada detalle.<br>Gracias por dejarme contar su historia.</p>
-    {% elif "retrato" in tipo %}
-      <p class="mensaje-text">Hay algo poderoso en una imagen que te muestra<br>tal como eres. Espero que la sientas tuya.</p>
-    {% else %}
-      <p class="mensaje-text">Cada sesión es única. Gracias por confiarme la tuya.<br>Espero que estas fotos signifiquen algo para ti.</p>
-    {% endif %}
+    <p class="mensaje-text">{{ sesion['mensaje'] }}</p>
     <p class="mensaje-firma">— Allen</p>
   </section>
+  {% endif %}
 
   <!-- GALERÍA -->
   <div class="galeria-header">
@@ -454,8 +302,7 @@
            data-name="{{ f['filename'] }}"
            data-idx="{{ loop.index0 }}">
         <img src="{{ f['cloudinary_url'] or ('/static/uploads/' + f['filename']) }}"
-             alt="foto" loading="lazy"
-             onclick="abrirLb({{ loop.index0 }})">
+             alt="foto" loading="lazy" onclick="abrirLb({{ loop.index0 }})">
         <div class="check" onclick="toggleSel(this.parentElement)">✓</div>
       </div>
     {% endfor %}
@@ -490,92 +337,75 @@
     const srcs  = items.map(i => i.dataset.src);
     let idx = 0, touchX = 0;
 
-    // ── Scroll reveal ────────────────────────
+    // Scroll reveal escalonado
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e, i) => {
         if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), i * 40);
+          setTimeout(() => e.target.classList.add('visible'), i * 50);
           observer.unobserve(e.target);
         }
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
+    }, { threshold: 0.06, rootMargin: '0px 0px -30px 0px' });
     items.forEach(el => observer.observe(el));
 
-    // ── Lightbox ─────────────────────────────
+    // Lightbox
     function abrirLb(i) {
       idx = i;
-      const lb = document.getElementById('lb');
       const img = document.getElementById('lb-img');
       img.classList.remove('loaded');
       img.src = srcs[idx];
       img.onload = () => img.classList.add('loaded');
-      document.getElementById('lb-counter').textContent = (idx + 1) + ' / ' + srcs.length;
-      lb.classList.add('open');
+      document.getElementById('lb-counter').textContent = (idx+1) + ' / ' + srcs.length;
+      document.getElementById('lb').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
     function cerrarLb() {
       document.getElementById('lb').classList.remove('open');
       document.body.style.overflow = '';
     }
-
     function mover(dir) {
       idx = (idx + dir + srcs.length) % srcs.length;
       const img = document.getElementById('lb-img');
       img.classList.remove('loaded');
       img.src = srcs[idx];
       img.onload = () => img.classList.add('loaded');
-      document.getElementById('lb-counter').textContent = (idx + 1) + ' / ' + srcs.length;
+      document.getElementById('lb-counter').textContent = (idx+1) + ' / ' + srcs.length;
     }
 
-    // ── Selección ────────────────────────────
-    function toggleSel(el) {
-      el.classList.toggle('sel');
-      actualizarBtn();
-    }
-
+    // Selección
+    function toggleSel(el) { el.classList.toggle('sel'); actualizarBtn(); }
     function selAll() {
       const all = document.querySelectorAll('.foto-item');
       const allSel = [...all].every(e => e.classList.contains('sel'));
       all.forEach(e => e.classList.toggle('sel', !allSel));
       actualizarBtn();
     }
-
     function actualizarBtn() {
       const n = document.querySelectorAll('.foto-item.sel').length;
       document.getElementById('nsel').textContent = n;
       document.getElementById('btnDl').disabled = n === 0;
     }
 
-    // ── Descarga ─────────────────────────────
+    // Descarga
     function descargarSel() {
       document.querySelectorAll('.foto-item.sel').forEach(el => {
         const a = document.createElement('a');
-        a.href = el.dataset.src;
-        a.download = el.dataset.name;
-        a.target = '_blank';
-        a.click();
+        a.href = el.dataset.src; a.download = el.dataset.name; a.target = '_blank'; a.click();
       });
     }
-
     function descargarTodo() {
       items.forEach(el => {
         const a = document.createElement('a');
-        a.href = el.dataset.src;
-        a.download = el.dataset.name;
-        a.target = '_blank';
-        a.click();
+        a.href = el.dataset.src; a.download = el.dataset.name; a.target = '_blank'; a.click();
       });
     }
 
-    // ── Teclado & touch ──────────────────────
+    // Teclado y touch
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape')      cerrarLb();
-      if (e.key === 'ArrowRight')  mover(1);
-      if (e.key === 'ArrowLeft')   mover(-1);
+      if (e.key === 'Escape')     cerrarLb();
+      if (e.key === 'ArrowRight') mover(1);
+      if (e.key === 'ArrowLeft')  mover(-1);
     });
-
     const lb = document.getElementById('lb');
     lb.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
     lb.addEventListener('touchend', e => {

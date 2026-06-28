@@ -5,12 +5,10 @@ import cloudinary.uploader
 from flask import (Flask, render_template, request,
                    redirect, url_for, session, jsonify)
 from database import init_db, get_conn
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "allen-portal-secret-2024")
 
-# ── CLOUDINARY CONFIG ───────────────────────────
 cloudinary.config(
     cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
     api_key=os.environ.get("CLOUDINARY_API_KEY"),
@@ -90,31 +88,44 @@ def nueva_sesion():
     conn.close()
     return redirect(url_for("panel"))
 
+
 @app.route("/sesion/<int:sid>")
 @login_required
 def ver_sesion(sid):
     conn = get_conn()
-    sesion = conn.execute(
-        "SELECT * FROM sesiones WHERE id=?", (sid,)
-    ).fetchone()
-    fotos = conn.execute(
-        "SELECT * FROM fotos WHERE sesion_id=?", (sid,)
-    ).fetchall()
+    sesion = conn.execute("SELECT * FROM sesiones WHERE id=?", (sid,)).fetchone()
+    fotos  = conn.execute("SELECT * FROM fotos WHERE sesion_id=?", (sid,)).fetchall()
     conn.close()
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
-    upload_preset = os.environ.get("CLOUDINARY_UPLOAD_PRESET", "allen-portal")
+    cloud_name    = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    upload_preset = os.environ.get("CLOUDINARY_UPLOAD_PRESET", "allenportal")
     return render_template("sesion.html", sesion=sesion, fotos=fotos,
                            cloud_name=cloud_name, upload_preset=upload_preset)
 
 
+# ── EDITAR SESIÓN (mensaje + portada) ───────────
 
-# ── GUARDAR URL (llamado por JS después de subir a Cloudinary) ──
+@app.route("/editar/<int:sid>", methods=["POST"])
+@login_required
+def editar_sesion(sid):
+    mensaje     = request.form.get("mensaje", "").strip()
+    portada_url = request.form.get("portada_url", "").strip()
+    conn = get_conn()
+    conn.execute(
+        "UPDATE sesiones SET mensaje=?, portada_url=? WHERE id=?",
+        (mensaje or None, portada_url or None, sid)
+    )
+    conn.commit()
+    conn.close()
+    return redirect(url_for("ver_sesion", sid=sid))
+
+
+# ── GUARDAR FOTO (Cloudinary URL → DB) ──────────
 
 @app.route("/guardar-foto/<int:sid>", methods=["POST"])
 @login_required
 def guardar_foto(sid):
-    data = request.get_json()
-    url = data.get("url")
+    data      = request.get_json()
+    url       = data.get("url")
     public_id = data.get("public_id")
     if not url:
         return jsonify({"error": "URL requerida"}), 400
@@ -133,16 +144,24 @@ def guardar_foto(sid):
 @app.route("/g/<token>")
 def galeria(token):
     conn = get_conn()
-    sesion = conn.execute(
-        "SELECT * FROM sesiones WHERE token=?", (token,)
-    ).fetchone()
+    sesion = conn.execute("SELECT * FROM sesiones WHERE token=?", (token,)).fetchone()
     if not sesion:
         return "Galería no encontrada", 404
     fotos = conn.execute(
-        "SELECT * FROM fotos WHERE sesion_id=?", (sesion[0],)
+        "SELECT * FROM fotos WHERE sesion_id=?", (sesion["id"],)
     ).fetchall()
     conn.close()
     return render_template("galeria.html", sesion=sesion, fotos=fotos)
+
+
+# ── DEBUG ────────────────────────────────────────
+
+@app.route("/debug-env")
+def debug_env():
+    return {
+        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+        "preset":     os.environ.get("CLOUDINARY_UPLOAD_PRESET"),
+    }
 
 
 # ── BORRAR ──────────────────────────────────────
@@ -151,15 +170,11 @@ def galeria(token):
 @login_required
 def borrar_sesion(sid):
     conn = get_conn()
-    fotos = conn.execute(
-        "SELECT public_id FROM fotos WHERE sesion_id=?", (sid,)
-    ).fetchall()
+    fotos = conn.execute("SELECT public_id FROM fotos WHERE sesion_id=?", (sid,)).fetchall()
     for f in fotos:
         if f[0]:
-            try:
-                cloudinary.uploader.destroy(f[0])
-            except Exception:
-                pass
+            try: cloudinary.uploader.destroy(f[0])
+            except: pass
     conn.execute("DELETE FROM fotos WHERE sesion_id=?", (sid,))
     conn.execute("DELETE FROM sesiones WHERE id=?", (sid,))
     conn.commit()
@@ -171,25 +186,15 @@ def borrar_sesion(sid):
 @login_required
 def borrar_foto(fid, sid):
     conn = get_conn()
-    foto = conn.execute(
-        "SELECT public_id FROM fotos WHERE id=?", (fid,)
-    ).fetchone()
+    foto = conn.execute("SELECT public_id FROM fotos WHERE id=?", (fid,)).fetchone()
     if foto and foto[0]:
-        try:
-            cloudinary.uploader.destroy(foto[0])
-        except Exception:
-            pass
+        try: cloudinary.uploader.destroy(foto[0])
+        except: pass
     conn.execute("DELETE FROM fotos WHERE id=?", (fid,))
     conn.commit()
     conn.close()
     return redirect(url_for("ver_sesion", sid=sid))
 
-@app.route("/debug-env")
-def debug_env():
-    return {
-        "cloud_name": os.environ.get("CLOUDINARY_CLOUD_NAME"),
-        "preset": os.environ.get("CLOUDINARY_UPLOAD_PRESET"),
-    }
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -15,11 +15,13 @@ def init_db():
     conn = get_conn()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS sesiones (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            cliente TEXT NOT NULL,
-            tipo    TEXT NOT NULL,
-            fecha   TEXT NOT NULL,
-            token   TEXT NOT NULL UNIQUE
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            cliente     TEXT NOT NULL,
+            tipo        TEXT NOT NULL,
+            fecha       TEXT NOT NULL,
+            token       TEXT NOT NULL UNIQUE,
+            mensaje     TEXT,
+            portada_url TEXT
         )
     """)
     conn.execute("""
@@ -32,14 +34,16 @@ def init_db():
             FOREIGN KEY (sesion_id) REFERENCES sesiones(id)
         )
     """)
-    # Migración: añadir columnas nuevas si la tabla ya existía
-    try:
-        conn.execute("ALTER TABLE fotos ADD COLUMN cloudinary_url TEXT")
-    except Exception:
-        pass
-    try:
-        conn.execute("ALTER TABLE fotos ADD COLUMN public_id TEXT")
-    except Exception:
-        pass
+    # Migraciones
+    for col in [
+        "ALTER TABLE fotos ADD COLUMN cloudinary_url TEXT",
+        "ALTER TABLE fotos ADD COLUMN public_id TEXT",
+        "ALTER TABLE sesiones ADD COLUMN mensaje TEXT",
+        "ALTER TABLE sesiones ADD COLUMN portada_url TEXT",
+    ]:
+        try:
+            conn.execute(col)
+        except Exception:
+            pass
     conn.commit()
     conn.close()
