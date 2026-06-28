@@ -137,14 +137,13 @@
 
     /* ── GALERÍA ──────────────────────────────── */
     .galeria-header {
-      padding: 0 20px 20px;
-      max-width: 980px;
+      padding: 40px 16px 16px;
+      max-width: 100%;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-top: 0.5px solid #e5e1dc;
-      padding-top: 40px;
     }
     .galeria-count { font-size: 11px; color: var(--gray-text); letter-spacing: .04em; }
     .btn-sel-all {
@@ -158,21 +157,20 @@
     /* Pinterest masonry */
     .masonry {
       columns: 2;
-      column-gap: 6px;
-      padding: 0 20px 32px;
-      max-width: 980px;
-      margin: 0 auto;
+      column-gap: 3px;
+      padding: 0;
+      width: 100%;
     }
     @media (min-width: 580px)  { .masonry { columns: 3; } }
     @media (min-width: 860px)  { .masonry { columns: 4; } }
 
     .foto-item {
       break-inside: avoid;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 12px;
       background: #e8e4df;
       opacity: 0;
       transform: translateY(20px);
