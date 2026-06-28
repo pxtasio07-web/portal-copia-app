@@ -195,6 +195,23 @@ def borrar_foto(fid, sid):
     conn.close()
     return redirect(url_for("ver_sesion", sid=sid))
 
+import requests as req_lib
+
+@app.route("/dl")
+def descargar():
+    url = request.args.get("url")
+    nombre = request.args.get("nombre", "foto.jpg")
+    if not url or "cloudinary.com" not in url:
+        return "URL inválida", 400
+    r = req_lib.get(url, stream=True)
+    from flask import Response
+    return Response(
+        r.iter_content(chunk_size=8192),
+        headers={
+            "Content-Disposition": f'attachment; filename="{nombre}"',
+            "Content-Type": r.headers.get("Content-Type", "image/jpeg")
+        }
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -388,14 +388,18 @@
     function descargarSel() {
       document.querySelectorAll('.foto-item.sel').forEach(el => {
         const a = document.createElement('a');
-        a.href = el.dataset.src; a.download = el.dataset.name; a.target = '_blank'; a.click();
+        a.href = `/dl?url=${encodeURIComponent(el.dataset.src)}&nombre=${encodeURIComponent(el.dataset.name)}`;
+        a.download = el.dataset.name;
+        a.click();
       });
     }
     function descargarTodo() {
-      items.forEach(el => {
-        const a = document.createElement('a');
-        a.href = el.dataset.src; a.download = el.dataset.name; a.target = '_blank'; a.click();
-      });
+     items.forEach(el => {
+     const a = document.createElement('a');
+     a.href = `/dl?url=${encodeURIComponent(el.dataset.src)}&nombre=${encodeURIComponent(el.dataset.name)}`;
+     a.download = el.dataset.name;
+     a.click();
+     });
     }
 
     // Teclado y touch
