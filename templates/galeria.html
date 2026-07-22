@@ -393,13 +393,9 @@
         a.click();
       });
     }
+    
     function descargarTodo() {
-     items.forEach(el => {
-     const a = document.createElement('a');
-     a.href = `/dl?url=${encodeURIComponent(el.dataset.src)}&nombre=${encodeURIComponent(el.dataset.name)}`;
-     a.download = el.dataset.name;
-     a.click();
-     });
+     window.location.href = "/descargar-todo/{{ sesion['token'] }}";
     }
 
     // Teclado y touch

@@ -2,6 +2,10 @@ import os
 import secrets
 import cloudinary
 import cloudinary.uploader
+import io
+import zipfile
+import requests
+from flask import send_file
 from flask import (Flask, render_template, request,
                    redirect, url_for, session, jsonify)
 from database import init_db, get_conn
@@ -152,6 +156,55 @@ def galeria(token):
     ).fetchall()
     conn.close()
     return render_template("galeria.html", sesion=sesion, fotos=fotos)
+
+@app.route("/descargar-todo/<token>")
+def descargar_todo(token):
+    conn = get_conn()
+
+    sesion = conn.execute(
+        "SELECT * FROM sesiones WHERE token=?",
+        (token,)
+    ).fetchone()
+
+    if not sesion:
+        conn.close()
+        return "Sesión no encontrada", 404
+
+    fotos = conn.execute(
+        "SELECT filename, cloudinary_url FROM fotos WHERE sesion_id=?",
+        (sesion["id"],)
+    ).fetchall()
+
+    conn.close()
+
+    memoria = io.BytesIO()
+
+    with zipfile.ZipFile(memoria, "w", zipfile.ZIP_DEFLATED) as zipf:
+
+        for foto in fotos:
+
+            try:
+                r = requests.get(foto["cloudinary_url"], timeout=20)
+
+                if r.status_code == 200:
+                    zipf.writestr(
+                        foto["filename"],
+                        r.content
+                    )
+
+            except Exception as e:
+                print(e)
+
+    memoria.seek(0)
+
+    nombre = f'{sesion["cliente"]}.zip'
+
+    return send_file(
+        memoria,
+        as_attachment=True,
+        download_name=nombre,
+        mimetype="application/zip"
+    )
 
 
 # ── DEBUG ────────────────────────────────────────
