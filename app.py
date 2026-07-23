@@ -128,20 +128,34 @@ def editar_sesion(sid):
 @app.route("/guardar-foto/<int:sid>", methods=["POST"])
 @login_required
 def guardar_foto(sid):
-    data      = request.get_json()
-    url       = data.get("url")
+    data = request.get_json()
+
+    url = data.get("url")
     public_id = data.get("public_id")
+    filename = data.get("filename")
+
     if not url:
         return jsonify({"error": "URL requerida"}), 400
+
+    # Si por alguna razón no llega el nombre, usa el de la URL
+    if not filename:
+        filename = os.path.basename(url.split("?")[0])
+
     conn = get_conn()
+
     conn.execute(
-        "INSERT INTO fotos (sesion_id, filename, cloudinary_url, public_id) VALUES (?,?,?,?)",
-        (sid, public_id or url.split("/")[-1], url, public_id)
+        """
+        INSERT INTO fotos
+        (sesion_id, filename, cloudinary_url, public_id)
+        VALUES (?, ?, ?, ?)
+        """,
+        (sid, filename, url, public_id)
     )
+
     conn.commit()
     conn.close()
-    return jsonify({"ok": True})
 
+    return jsonify({"ok": True})
 
 # ── GALERÍA CLIENTE ─────────────────────────────
 

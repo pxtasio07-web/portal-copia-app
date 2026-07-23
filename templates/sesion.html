@@ -253,7 +253,11 @@
               await fetch(`/guardar-foto/${SESSION_ID}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: data.secure_url, public_id: data.public_id })
+                body: JSON.stringify({
+                  url: data.secure_url,
+                  public_id: data.public_id,
+                  filename: file.name
+                })
               });
               statusEl.textContent = '✓';
               statusEl.className = 'status status-done';
